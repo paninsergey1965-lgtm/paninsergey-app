@@ -10,25 +10,68 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --black: #0a0a0a;
-    --white: #eef4f8;
-    --gray: #6b6b6b;
-    --light: #dde8f0;
+    --black: #ffffff;
+    --white: transparent;
+    --gray: rgba(255,255,255,0.5);
+    --light: rgba(255,255,255,0.06);
     --accent: #e63329;
-    --border: #c6d4dc;
+    --border: rgba(255,255,255,0.12);
+  }
+
+  @keyframes bgShift {
+    0%   { background-position: 0% 0%; }
+    25%  { background-position: 100% 0%; }
+    50%  { background-position: 100% 100%; }
+    75%  { background-position: 0% 100%; }
+    100% { background-position: 0% 0%; }
   }
 
   html { scroll-behavior: smooth; }
 
   body {
     font-family: 'Manrope', sans-serif;
-    background: var(--white);
+    background: linear-gradient(
+      135deg,
+      #2a3d52,
+      #2e3a5a,
+      #3a2a5a,
+      #2a4540,
+      #3a2a50,
+      #2a3d52
+    );
+    background-size: 400% 400%;
+    animation: bgShift 20s ease infinite;
     color: var(--black);
     font-size: 16px;
     line-height: 1.5;
     cursor: none;
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
+  }
+
+
+  /* Watermark */
+  .watermark {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+    opacity: 0.06;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    gap: 0;
+  }
+  .watermark span {
+    font-family: 'Manrope', sans-serif;
+    font-size: 32px;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    padding: 10px 16px;
+    flex-shrink: 0;
   }
 
   /* Page load block animation */
@@ -68,7 +111,7 @@
     position: fixed;
     width: 12px;
     height: 12px;
-    background: var(--black);
+    background: #ffffff;
     border-radius: 50%;
     pointer-events: none;
     z-index: 9999;
@@ -106,7 +149,7 @@
     letter-spacing: 0.05em;
     text-transform: uppercase;
     text-decoration: none;
-    color: var(--black);
+    color: #ffffff;
   }
   nav a {
     font-size: 14px;
@@ -228,6 +271,154 @@
     transition: background 0.2s;
   }
   .mute-btn:hover { background: rgba(0,0,0,0.6); }
+
+
+
+  /* Photo in about */
+  .about-photo-wrap {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    gap: 64px;
+    align-items: start;
+    margin-bottom: 64px;
+  }
+  .about-photo {
+    width: 100%;
+    aspect-ratio: 3/4;
+    object-fit: cover;
+    object-position: top;
+    filter: grayscale(20%);
+  }
+  .about-photo-text {
+    padding-top: 16px;
+  }
+  @media (max-width: 640px) {
+    .about-photo-wrap { grid-template-columns: 1fr; gap: 32px; }
+    .about-photo { aspect-ratio: 4/3; }
+  }
+
+  /* Project logo */
+  .project-logo {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    margin-bottom: 12px;
+    opacity: 0.9;
+  }
+
+  /* Compact contacts */
+  .contacts-grid {
+    display: flex;
+    gap: 0;
+    border-top: 1px solid var(--border);
+    border-left: 1px solid var(--border);
+  }
+  .contact-item {
+    flex: 1;
+  }
+
+  /* About section */
+  .about {
+    padding: 80px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .about-intro {
+    font-size: clamp(22px, 4vw, 36px);
+    font-weight: 300;
+    line-height: 1.4;
+    max-width: 760px;
+    margin-bottom: 64px;
+    color: var(--black);
+  }
+  .about-intro strong {
+    font-weight: 800;
+  }
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border-top: 1px solid var(--border);
+    border-left: 1px solid var(--border);
+    margin-bottom: 64px;
+  }
+  .about-cell {
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 32px;
+  }
+  .about-cell-title {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gray);
+    margin-bottom: 16px;
+  }
+  .about-cell-items {
+    list-style: none;
+    padding: 0;
+  }
+  .about-cell-items li {
+    font-size: 15px;
+    color: var(--black);
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+    font-weight: 500;
+  }
+  .about-cell-items li:last-child { border-bottom: none; }
+  .about-experience {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    border-top: 1px solid var(--border);
+    border-left: 1px solid var(--border);
+  }
+  .about-exp-item {
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 32px;
+  }
+  .about-exp-num {
+    font-size: 48px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin-bottom: 8px;
+    color: var(--black);
+  }
+  .about-exp-label {
+    font-size: 13px;
+    color: var(--gray);
+    line-height: 1.4;
+  }
+  .about-philosophy {
+    margin-top: 64px;
+    padding-top: 48px;
+    border-top: 1px solid var(--border);
+  }
+  .about-philosophy-text {
+    font-size: clamp(18px, 3vw, 28px);
+    font-weight: 300;
+    line-height: 1.5;
+    max-width: 640px;
+    color: var(--gray);
+  }
+  .about-philosophy-text em {
+    font-style: normal;
+    color: var(--black);
+    font-weight: 600;
+  }
+  .about-tags {
+    margin-top: 48px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  @media (max-width: 640px) {
+    .about-grid { grid-template-columns: 1fr; }
+    .about-experience { grid-template-columns: 1fr 1fr; }
+  }
 
   /* Section titles */
   .section-header {
@@ -393,6 +584,69 @@
 
 <div class="cursor" id="cursor"></div>
 
+<div class="watermark" aria-hidden="true">
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+  <span>SP</span>
+</div>
+
 <div class="container">
 
   <header class="block-animate">
@@ -415,16 +669,60 @@
     <h1>Сергей<br>Па<em>нин</em></h1>
     <div class="hero-sub">
       <p class="hero-desc">Строю продукты на пересечении AI, Web и Blockchain. Работаю один — от идеи до запуска.</p>
-      <div class="hero-stats">
-        <div class="stat">
-          <div class="stat-num">6</div>
-          <div class="stat-label">проектов</div>
-        </div>
-        <div class="stat">
-          <div class="stat-num">2024</div>
-          <div class="stat-label">основал ИП</div>
-        </div>
+    </div>
+  </section>
+
+  <section class="about block-animate">
+    <div class="about-photo-wrap">
+      <img src="photo.png" alt="Сергей Панин" class="about-photo">
+      <div class="about-photo-text">
+        <p class="about-intro" style="margin-bottom:0">Я создаю <strong>цифровые продукты</strong>, которые решают реальные задачи. Не просто сайты. Не просто приложения — инструменты, которые объединяют AI, компьютерное зрение и современные технологии.</p>
       </div>
+    </div>
+    <p class="about-intro" style="display:none">Я создаю <strong>цифровые продукты</strong>, которые решают реальные задачи. Не просто сайты. Не просто приложения — инструменты, которые объединяют AI, компьютерное зрение и современные технологии.</p>
+
+    <div class="about-grid">
+      <div class="about-cell">
+        <div class="about-cell-title">Что делаю</div>
+        <ul class="about-cell-items">
+          <li>AI-приложения и интеграции с LLM</li>
+          <li>Telegram Mini Apps и боты</li>
+          <li>SaaS-платформы</li>
+          <li>Компьютерное зрение</li>
+          <li>API и интеграции</li>
+          <li>Landing Page</li>
+        </ul>
+      </div>
+      <div class="about-cell">
+        <div class="about-cell-title">Технологии</div>
+        <ul class="about-cell-items">
+          <li>React · Next.js · TypeScript</li>
+          <li>Node.js · PostgreSQL · Firebase</li>
+          <li>OpenAI · Claude · Gemini</li>
+          <li>Cloudflare · Docker · Git</li>
+          <li>ONNX · Computer Vision</li>
+          <li>Blockchain · TON</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="about-experience">
+      <div class="about-exp-item">
+        <div class="about-exp-num">60</div>
+        <div class="about-exp-label">лет жизненного опыта</div>
+      </div>
+      <div class="about-exp-item">
+        <div class="about-exp-num">30</div>
+        <div class="about-exp-label">лет предпринимательства</div>
+      </div>
+      <div class="about-exp-item">
+        <div class="about-exp-num">AI</div>
+        <div class="about-exp-label">современная разработка</div>
+      </div>
+    </div>
+
+    <div class="about-philosophy">
+      <p class="about-philosophy-text">Каждый проект начинается не с программирования. Он начинается с вопроса: <em>«Какую проблему мы решаем?»</em> Только после этого появляются архитектура, интерфейс и код.</p>
     </div>
   </section>
 
@@ -555,6 +853,7 @@
 
   <footer class="block-animate">
     <span>© 2026 Сергей Панин</span>
+    <span style="font-size:11px;opacity:0.4;text-align:center;">ИП Панин Сергей Николаевич · ИНН 771501067019 · ОГРНИП 324774600501998</span>
     <span>paninsergey.app</span>
   </footer>
 
