@@ -597,6 +597,15 @@
   }, { threshold: 0.08 });
 
   document.querySelectorAll('.project').forEach(el => observer.observe(el));
+
+  // Stop video on page leave
+  document.addEventListener('visibilitychange', () => {
+    const video = document.querySelector('.hero-video');
+    if (video) {
+      if (document.hidden) { video.pause(); }
+      else { video.play(); }
+    }
+  });
 </script>
 
 </body>
