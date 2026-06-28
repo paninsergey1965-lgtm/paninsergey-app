@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Сергей Панин</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;600;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --black: #0a0a0a;
+    --white: #eef4f8;
+    --gray: #6b6b6b;
+    --light: #dde8f0;
+    --accent: #e63329;
+    --border: #c6d4dc;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Manrope', sans-serif;
+    background: var(--white);
+    color: var(--black);
+    font-size: 16px;
+    line-height: 1.5;
+    cursor: none;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  /* Page load block animation */
+  .block-animate {
+    opacity: 0;
+    transform: translateY(-28px);
+    transition: opacity 0.55s ease, transform 0.55s ease;
+  }
+  .block-animate.loaded {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Project index counter roll */
+  .proj-num {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--border);
+    letter-spacing: 0.1em;
+    overflow: hidden;
+    display: inline-block;
+    height: 1.3em;
+    vertical-align: bottom;
+    margin-right: 12px;
+  }
+  .proj-num span {
+    display: block;
+    transform: translateY(-110%);
+    transition: transform 0.45s cubic-bezier(0.22,1,0.36,1);
+  }
+  .project.visible .proj-num span {
+    transform: translateY(0);
+  }
+
+  /* Custom cursor */
+  .cursor {
+    position: fixed;
+    width: 12px;
+    height: 12px;
+    background: var(--black);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: width 0.2s, height 0.2s, background 0.2s;
+    mix-blend-mode: multiply;
+  }
+  .cursor.big {
+    width: 48px;
+    height: 48px;
+    background: var(--accent);
+  }
+
+  /* Layout */
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+
+  /* Header */
+  header {
+    padding: 36px 0 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .header-inner {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding-bottom: 20px;
+  }
+  .logo {
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--black);
+  }
+  nav a {
+    font-size: 14px;
+    color: var(--gray);
+    text-decoration: none;
+    margin-left: 32px;
+    transition: color 0.2s;
+  }
+  nav a:hover { color: var(--black); }
+
+  /* Hero */
+  .hero {
+    padding: 80px 32px 60px;
+    margin: 0 -32px;
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+  }
+  .hero-label {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gray);
+    margin-bottom: 28px;
+  }
+  .hero h1 {
+    font-size: clamp(52px, 9vw, 108px);
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    margin-bottom: 40px;
+  }
+  .hero h1 em {
+    font-style: normal;
+    color: var(--accent);
+  }
+  .hero-sub {
+    display: flex;
+    gap: 48px;
+    align-items: flex-start;
+  }
+  .hero-desc {
+    font-size: 18px;
+    font-weight: 300;
+    color: var(--gray);
+    max-width: 480px;
+    line-height: 1.65;
+  }
+  .hero-stats {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .stat {
+    text-align: right;
+  }
+  .stat-num {
+    font-size: 36px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 12px;
+    color: var(--gray);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+
+  /* Video hero */
+  .hero {
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+    opacity: 0.7;
+  }
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.3) 100%);
+    z-index: 1;
+  }
+  .hero > *:not(.hero-video):not(.hero-overlay) {
+    position: relative;
+    z-index: 2;
+  }
+  .hero .hero-label { color: rgba(255,255,255,0.5); }
+  .hero h1 { color: #ffffff; }
+  .hero .hero-desc { color: rgba(255,255,255,0.6); }
+  .hero .stat-num { color: #ffffff; }
+  .hero .stat-label { color: rgba(255,255,255,0.4); }
+
+  /* Section titles */
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 48px 0 32px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 0;
+  }
+  .section-title {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gray);
+  }
+  .section-count {
+    font-size: 13px;
+    color: var(--border);
+    font-weight: 600;
+  }
+
+  /* Projects */
+  .project {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    padding: 40px 0;
+    text-decoration: none;
+    color: inherit;
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.5s ease, transform 0.5s ease, background 0.2s;
+    cursor: none;
+  }
+  .project.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .project:hover { background: var(--light); margin: 0 -32px; padding: 40px 32px; }
+
+  .project-left { padding-right: 48px; }
+  .project-name {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+    line-height: 1.1;
+  }
+  .project-url {
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .project-desc {
+    font-size: 15px;
+    color: var(--gray);
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+  .project-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .tag {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    color: var(--gray);
+  }
+
+  /* Arrow */
+  .project-arrow {
+    font-size: 32px;
+    color: var(--border);
+    text-align: right;
+    line-height: 1;
+    transition: color 0.2s, transform 0.2s;
+    align-self: center;
+  }
+  .project:hover .project-arrow {
+    color: var(--black);
+    transform: translate(4px, -4px);
+  }
+
+  /* Contacts */
+  .contacts {
+    padding: 64px 0 80px;
+  }
+  .contacts-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    border-top: 1px solid var(--border);
+    border-left: 1px solid var(--border);
+  }
+  .contact-item {
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 32px;
+    text-decoration: none;
+    color: var(--black);
+    display: block;
+    transition: background 0.2s;
+    cursor: none;
+  }
+  .contact-item:hover { background: var(--black); color: var(--white); }
+  .contact-item:hover .contact-label { color: rgba(255,255,255,0.4); }
+  .contact-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gray);
+    margin-bottom: 8px;
+  }
+  .contact-value {
+    font-size: 17px;
+    font-weight: 600;
+  }
+
+  /* Footer */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 24px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  footer span {
+    font-size: 13px;
+    color: var(--gray);
+  }
+
+  /* Mobile */
+  @media (max-width: 640px) {
+    body { cursor: auto; }
+    .cursor { display: none; }
+    .container { padding: 0 20px; }
+    .hero { padding: 48px 20px 40px; margin: 0 -20px; }
+    .hero-sub { flex-direction: column; gap: 24px; }
+    .hero-stats { flex-direction: row; gap: 32px; }
+    .stat { text-align: left; }
+    .project { grid-template-columns: 1fr; gap: 16px; }
+    .project-arrow { text-align: left; }
+    .contacts-grid { grid-template-columns: 1fr; }
+    nav { display: none; }
+    footer { flex-direction: column; gap: 8px; text-align: center; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .project { opacity: 1; transform: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+
+<div class="container">
+
+  <header class="block-animate">
+    <div class="header-inner">
+      <a class="logo" href="/">SP</a>
+      <nav>
+        <a href="#projects">Проекты</a>
+        <a href="#contacts">Контакты</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero block-animate">
+    <video class="hero-video" autoplay muted loop playsinline>
+      <source src="hero.mp4" type="video/mp4">
+    </video>
+    <div class="hero-overlay"></div>
+    <p class="hero-label">Независимый разработчик · Москва</p>
+    <h1>Сергей<br>Па<em>нин</em></h1>
+    <div class="hero-sub">
+      <p class="hero-desc">Строю продукты на пересечении AI, Web и Blockchain. Работаю один — от идеи до запуска.</p>
+      <div class="hero-stats">
+        <div class="stat">
+          <div class="stat-num">6</div>
+          <div class="stat-label">проектов</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">2024</div>
+          <div class="stat-label">основал ИП</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="projects" class="block-animate">
+    <div class="section-header">
+      <span class="section-title">Проекты</span>
+      <span class="section-count">06</span>
+    </div>
+
+    <a class="project" href="https://jadekey.art" target="_blank">
+      <div class="project-left">
+        <div class="proj-num"><span>01</span></div><div class="project-name">JadeKey</div>
+        <div class="project-url">jadekey.art</div>
+      </div>
+      <div>
+        <p class="project-desc">Аутентификация произведений искусства через минеральные PUF и блокчейн TON. Уникальный цифровой паспорт для каждого объекта.</p>
+        <div class="project-tags">
+          <span class="tag">Python</span>
+          <span class="tag">TON</span>
+          <span class="tag">AI</span>
+          <span class="tag">Cloudflare</span>
+        </div>
+      </div>
+      <div class="project-arrow">↗</div>
+    </a>
+
+    <a class="project" href="https://jadekey.tech" target="_blank">
+      <div class="project-left">
+        <div class="proj-num"><span>02</span></div><div class="project-name">JadeKey Tech</div>
+        <div class="project-url">jadekey.tech</div>
+      </div>
+      <div>
+        <p class="project-desc">Технологическая документация и описание технологии минеральных PUF для аутентификации объектов искусства.</p>
+        <div class="project-tags">
+          <span class="tag">Cloudflare</span>
+          <span class="tag">Workers</span>
+        </div>
+      </div>
+      <div class="project-arrow">↗</div>
+    </a>
+
+    <a class="project" href="#" target="_blank">
+      <div class="project-left">
+        <div class="proj-num"><span>03</span></div><div class="project-name">CIS Innovation Platform</div>
+        <div class="project-url">В разработке</div>
+      </div>
+      <div>
+        <p class="project-desc">AI-платформа для анализа стартапов СНГ с автоматической классификацией, дорожными картами и отчётами.</p>
+        <div class="project-tags">
+          <span class="tag">FastAPI</span>
+          <span class="tag">PostgreSQL</span>
+          <span class="tag">GPT-4</span>
+          <span class="tag">Railway</span>
+        </div>
+      </div>
+      <div class="project-arrow">↗</div>
+    </a>
+
+    <a class="project" href="https://t.me/Bronislavbro_bot" target="_blank">
+      <div class="project-left">
+        <div class="proj-num"><span>04</span></div><div class="project-name">Bronislav Bot</div>
+        <div class="project-url">@Bronislavbro_bot</div>
+      </div>
+      <div>
+        <p class="project-desc">Telegram-бот в образе философа Бронислава Виноградского: голос, память, генерация изображений.</p>
+        <div class="project-tags">
+          <span class="tag">Python</span>
+          <span class="tag">GPT-4o</span>
+          <span class="tag">Whisper</span>
+          <span class="tag">Telegram</span>
+        </div>
+      </div>
+      <div class="project-arrow">↗</div>
+    </a>
+
+    <a class="project" href="https://t.me/JadeKeyOfficialBot" target="_blank">
+      <div class="project-left">
+        <div class="proj-num"><span>05</span></div><div class="project-name">JadeKey Bot</div>
+        <div class="project-url">@JadeKeyOfficialBot</div>
+      </div>
+      <div>
+        <p class="project-desc">Telegram Mini App со сканером минералов и камней на основе компьютерного зрения.</p>
+        <div class="project-tags">
+          <span class="tag">Telegram</span>
+          <span class="tag">Mini App</span>
+          <span class="tag">AI</span>
+          <span class="tag">CV</span>
+        </div>
+      </div>
+      <div class="project-arrow">↗</div>
+    </a>
+
+    <a class="project" href="https://tanyaegorova.space" target="_blank">
+      <div class="project-left">
+        <div class="proj-num"><span>06</span></div><div class="project-name">Tanya Egorova</div>
+        <div class="project-url">tanyaegorova.space</div>
+      </div>
+      <div>
+        <p class="project-desc">Персональный сайт Тани Егоровой. Анимации, портфолио, контакты.</p>
+        <div class="project-tags">
+          <span class="tag">Cloudflare Pages</span>
+        </div>
+      </div>
+      <div class="project-arrow">↗</div>
+    </a>
+
+  </section>
+
+  <section id="contacts" class="contacts block-animate">
+    <div class="section-header" style="margin-bottom: 32px;">
+      <span class="section-title">Контакты</span>
+    </div>
+    <div class="contacts-grid">
+      <a class="contact-item" href="https://t.me/direkto" target="_blank">
+        <div class="contact-label">Telegram</div>
+        <div class="contact-value">@direkto</div>
+      </a>
+      <a class="contact-item" href="mailto:direkto65@mail.ru">
+        <div class="contact-label">Email</div>
+        <div class="contact-value">direkto65<br>@mail.ru</div>
+      </a>
+      <a class="contact-item" href="https://github.com/paninsergey1965-lgtm" target="_blank">
+        <div class="contact-label">GitHub</div>
+        <div class="contact-value">paninsergey<br>1965-lgtm</div>
+      </a>
+    </div>
+  </section>
+
+  <footer class="block-animate">
+    <span>© 2026 Сергей Панин</span>
+    <span>paninsergey.app</span>
+  </footer>
+
+</div>
+
+<script>
+  // Cursor
+  const cursor = document.getElementById('cursor');
+  document.addEventListener('mousemove', e => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top = e.clientY + 'px';
+  });
+  document.querySelectorAll('a').forEach(el => {
+    el.addEventListener('mouseenter', () => cursor.classList.add('big'));
+    el.addEventListener('mouseleave', () => cursor.classList.remove('big'));
+  });
+
+  // Page load: staggered block reveal
+  const blocks = document.querySelectorAll('.block-animate');
+  blocks.forEach((el, i) => {
+    setTimeout(() => el.classList.add('loaded'), 80 + i * 110);
+  });
+
+  // Scroll reveal for projects (counter rolls in)
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 90);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.08 });
+
+  document.querySelectorAll('.project').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
+
