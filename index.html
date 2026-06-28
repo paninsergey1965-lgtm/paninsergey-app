@@ -207,6 +207,28 @@
   .hero .stat-num { color: #ffffff; }
   .hero .stat-label { color: rgba(255,255,255,0.4); }
 
+
+  /* Mute button */
+  .mute-btn {
+    position: absolute;
+    bottom: 24px;
+    right: 24px;
+    z-index: 10;
+    width: 40px;
+    height: 40px;
+    border: 1px solid rgba(255,255,255,0.4);
+    border-radius: 50%;
+    background: rgba(0,0,0,0.3);
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    transition: background 0.2s;
+  }
+  .mute-btn:hover { background: rgba(0,0,0,0.6); }
+
   /* Section titles */
   .section-header {
     display: flex;
@@ -388,6 +410,7 @@
       <source src="hero.mp4" type="video/mp4">
     </video>
     <div class="hero-overlay"></div>
+    <button class="mute-btn" id="muteBtn" onclick="toggleMute()">🔇</button>
     <p class="hero-label">Независимый разработчик · Москва</p>
     <h1>Сергей<br>Па<em>нин</em></h1>
     <div class="hero-sub">
@@ -548,6 +571,14 @@
     el.addEventListener('mouseenter', () => cursor.classList.add('big'));
     el.addEventListener('mouseleave', () => cursor.classList.remove('big'));
   });
+
+  // Mute toggle
+  function toggleMute() {
+    const video = document.querySelector('.hero-video');
+    const btn = document.getElementById('muteBtn');
+    video.muted = !video.muted;
+    btn.textContent = video.muted ? '🔇' : '🔊';
+  }
 
   // Page load: staggered block reveal
   const blocks = document.querySelectorAll('.block-animate');
