@@ -655,7 +655,7 @@
       <source src="hero.mp4" type="video/mp4">
     </video>
     <div class="hero-overlay"></div>
-    <button class="mute-btn" id="muteBtn" onclick="toggleMute()">🔇</button>
+    <button class="mute-btn" id="muteBtn" onclick="toggleMute()">SOUND</button>
     <p class="hero-label">Независимый разработчик · Москва</p>
     <h1>Сергей<br>Па<em>нин</em></h1>
     <div class="hero-sub">
@@ -868,7 +868,7 @@
     const video = document.querySelector('.hero-video');
     const btn = document.getElementById('muteBtn');
     video.muted = !video.muted;
-    btn.textContent = video.muted ? '🔇' : '🔊';
+    btn.textContent = video.muted ? 'SOUND' : 'MUTE';
   }
 
   // Page load: staggered block reveal
